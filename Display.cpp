@@ -63,6 +63,7 @@ static const char *SetupTitles[MAX_SETUP_ITEMS] =
 {
 	"Imposta ora",
 	"Imposta data",
+	"Tempo calc. avg",
 };
 
 static const char *ResetTitles[MAX_RESET_ITEMS] = 
@@ -196,11 +197,11 @@ void DrawCurrentCtrl()
 		switch(RotaryState)
 		{
 			case DECREMENT:
-				if(Current > 0 && !CurrenEnable)
+				if(Current > 0)
 					Current--;
 				break;
 			case INCREMENT:
-				if(Current < 50 && !CurrenEnable)
+				if(Current < 50)
 					Current++;			
 				break;
 			case OK:
@@ -208,6 +209,8 @@ void DrawCurrentCtrl()
 				Flags.enableCurrent = CurrenEnable;
 				if(CurrenEnable)
 					CurrentSet = (float)Current / 10;
+				else
+					CurrentSet = 0.0;
 				break;
 			case BACK:
 				DisplayPage = MAIN_MENU;

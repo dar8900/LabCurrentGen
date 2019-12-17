@@ -19,8 +19,9 @@ typedef struct
 extern MEASURES_S Measures;
 extern float CurrentSet;
 
-void CalcMeasures(void);
 void TempSensInit(void);
+void CalcMeasures(void);
+void ResetMaxMinAvg(void);
 
 
 #endif

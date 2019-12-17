@@ -1,6 +1,10 @@
 // Generatore da banco di corrente costante
 #include "LabCurrentGen.h"
 #include "Display.h"
+#include "Keyboard.h"
+#include "CurrentControl.h"
+#include "Time.h"
+#include "Measure.h"
 
 SYSTEM_FLAGS Flags;
 
@@ -8,7 +12,11 @@ uint8_t DisplayPage = MAIN_MENU;
 
 void setup()
 {
-	
+	DisplayInit();
+	KeyboardInit();
+	CurrentControlInit();
+	TimeInit();
+	TempSensInit();
 }
 
 

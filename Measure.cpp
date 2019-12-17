@@ -2,7 +2,6 @@
 #include "Measure.h"
 
 #define N_SAMPLE 	 50
-#define ADC_TO_VOLT  0.0049
 #define VOLTAGE 	 12.0
 
 MEASURES_S Measures;
@@ -11,6 +10,7 @@ float CurrentAvgAcc = 0.0, PowerAvgAcc = 0.0, TemperatureAvgAcc = 0.0;
 uint32_t AvgAcCnt = 0;
 
 float CurrentSet;
+int AdcCurrentOffSet;
 
 Chrono CalcAvgTotTimer(Chrono::SECONDS);
 Chrono CalcAvgTimer;
@@ -76,19 +76,47 @@ void CalcMeasures()
 {
 	int Sample = 0;
 	uint32_t CurrentRead = 0;
-	for(Sample = 0; Sample < N_SAMPLE; Sample++)
+	if(Flags.enableCurrent)
 	{
-		CurrentRead += analogRead(CURRENT_SENS_PIN);
+		// Tempo 5ms 
+		for(Sample = 0; Sample < N_SAMPLE; Sample++)
+		{
+			CurrentRead += analogRead(CURRENT_SENS_PIN);
+		}
+		CurrentRead /= N_SAMPLE;
+		CurrentRead -= AdcCurrentOffSet;
+		Measures.Current.Actual = (float)CurrentRead * ADC_TO_VOLT / ACS20_VOLT_TO_AMPS;
+		Measures.Current.Actual = roundf(Measures.Current.Actual * 10) / 10;
+		Measures.Power.Actual = Measures.Current.Actual * VOLTAGE;
 	}
-	CurrentRead /= N_SAMPLE;
-	Measures.Current.Actual = (float)CurrentRead * ADC_TO_VOLT;
-	Measures.Current.Actual = roundf(Measures.Current.Actual * 10) / 10;
-	Measures.Power.Actual = Measures.Current.Actual * VOLTAGE;
-	CalcTemperature();
+	else
+	{
+		for(Sample = 0; Sample < 10; Sample++)
+		{
+			CurrentRead += analogRead(CURRENT_SENS_PIN);
+		}		
+		AdcCurrentOffSet = CurrentRead / 10;
+		Measures.Current.Actual = 0.0;
+		Measures.Power.Actual = 0.0;		
+	}
+
 	CalcMaxMin(&Measures.Current);
 	CalcMaxMin(&Measures.Power);
+	CalcTemperature();
 	CalcAvg();
 }
 
 
+void ResetMaxMinAvg()
+{
+	Measures.Current.Max = 0.0;
+	Measures.Current.Min = 0.0;
+	Measures.Current.Avg = 0.0;
+	Measures.Power.Max = 0.0;
+	Measures.Power.Min = 0.0;
+	Measures.Power.Avg = 0.0;
+	Measures.Temperature.Max = 0.0;
+	Measures.Temperature.Min = 0.0;
+	Measures.Temperature.Avg = 0.0;
+}
 

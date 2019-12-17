@@ -79,6 +79,7 @@ typedef enum
 {
 	SET_TIME_ITEM = 0,
 	SET_DATE_ITEM,
+	AVG_CALC_TIME,
 	MAX_SETUP_ITEMS
 }SETUP_ITEMS;
 
@@ -89,6 +90,7 @@ typedef enum
 	MAX_RESET_ITEMS
 }RESET_ITEMS;
 
+void DisplayInit(void);
 void DrawMainMenu(void);
 void DrawCurrentCtrl(void);
 

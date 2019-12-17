@@ -40,13 +40,14 @@
 
 #define MIN_TO_SEC(min)		 (min * 60)
 
+#define ANALOG_CHANNELS			  4
+#define ADC_TO_VOLT 			 0.0049 
+#define ACS20_VOLT_TO_AMPS	 0.1
+
 typedef struct 
 {
 	bool enableLog;
-	bool enableAnalog_1;
-	bool enableanalog_2;
-	bool enableanalog_3;
-	bool enableanalog_4;
+	bool enableAnalogChannel[ANALOG_CHANNELS];
 	bool enableCurrent;
 
 }SYSTEM_FLAGS;
