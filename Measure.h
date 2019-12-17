@@ -17,9 +17,10 @@ typedef struct
 }MEASURES_S;
 
 extern MEASURES_S Measures;
+extern float CurrentSet;
 
 void CalcMeasures(void);
 void TempSensInit(void);
-void CalcMeasures(void);
+
 
 #endif

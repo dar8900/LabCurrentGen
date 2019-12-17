@@ -5,6 +5,7 @@
 #include "Keyboard.h"
 #include "Time.h"
 #include "Measure.h"
+#include "CurrentControl.h"
 
 #define SET_TOP_BAR_FONT (u8g2.setFont(u8g2_font_4x6_mf))
 #define SET_MENUS_FONT  (u8g2.setFont(u8g2_font_6x10_mf)) // alto 6 largo 10 monospace 
@@ -75,6 +76,14 @@ void DisplayInit()
 	u8g2.begin();
 }
 
+static void DoTasks()
+{
+	CalcMeasures();
+	CtrlCurrentExit();
+	GetTime();
+	CtrlTimeOn(false);
+}
+
 static void DrawTopInfo()
 {
 	String TimeStr = GlobalTime.TimeStr + " " + GlobalTime.DateStr;
@@ -113,6 +122,7 @@ void DrawMainMenu()
 	
 	while(!ExitMainMenu)
 	{
+		DoTasks();
 		u8g2.clearBuffer();
 		DrawTopInfo();
 		DrawMenuList(TopItem, ItemList, MAX_MAIN_MENU_ITEMS, MainMenuTitles);
@@ -158,9 +168,18 @@ void DrawMainMenu()
 	}
 }
 
-static void CurrentCtrlScreen(uint8_t Current, bool CurrentEnable)
+static void CurrentCtrlScreen(uint8_t Current)
 {
-
+	String CurrValueMis = "", CurrValueSet = "";
+	float CurrentSetFl = (float)Current / 10;
+	CurrValueMis = String(Measures.Current.Actual, 1);
+	CurrValueSet = String(CurrentSetFl, 1);
+	SET_TITLE_FONT;
+	u8g2.drawStr(CENTER_ALIGN("Reg. I"), TITLE_Y_POS + STR_HIGH, "Reg. I");
+	u8g2.setFont(u8g2_font_9x15B_mf);
+	u8g2.drawStr(LEFT_ALIGN, MENU_LIST_Y_POS + STR_HIGH, CurrValueSet.c_str());
+	u8g2.drawStr(RIGHT_ALIGN(CurrValueMis.c_str()), MENU_LIST_Y_POS + STR_HIGH, CurrValueMis.c_str());
+	u8g2.drawStr(CENTER_ALIGN("-->"), MENU_LIST_Y_POS + STR_HIGH, "-->");
 }
 
 void DrawCurrentCtrl()
@@ -169,22 +188,26 @@ void DrawCurrentCtrl()
 	uint8_t Current = 0, RotaryState = NO_PRESS;
 	while(!ExitCurrentCrtl)
 	{
+		DoTasks();
 		u8g2.clearBuffer();
 		DrawTopInfo();
-
+		CurrentCtrlScreen(Current);
 		u8g2.sendBuffer();		
 		switch(RotaryState)
 		{
 			case DECREMENT:
-				if(Current > 0)
-					Current -= 5;
+				if(Current > 0 && !CurrenEnable)
+					Current--;
 				break;
 			case INCREMENT:
-				if(Current < 60)
-					Current += 5;			
+				if(Current < 50 && !CurrenEnable)
+					Current++;			
 				break;
 			case OK:
 				CurrenEnable = !CurrenEnable;
+				Flags.enableCurrent = CurrenEnable;
+				if(CurrenEnable)
+					CurrentSet = (float)Current / 10;
 				break;
 			case BACK:
 				DisplayPage = MAIN_MENU;

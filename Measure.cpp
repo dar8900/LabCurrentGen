@@ -10,6 +10,8 @@ MEASURES_S Measures;
 float CurrentAvgAcc = 0.0, PowerAvgAcc = 0.0, TemperatureAvgAcc = 0.0;
 uint32_t AvgAcCnt = 0;
 
+float CurrentSet;
+
 Chrono CalcAvgTotTimer(Chrono::SECONDS);
 Chrono CalcAvgTimer;
 Chrono TakeTempTimer;
@@ -18,13 +20,15 @@ DHT SensorDht11(DHT_PIN, DHTTYPE);
 
 static void CalcMaxMin(SINGLE_MEASURE_S *Measure)
 {
-	float ActualForMinMeasure = roundf(Measure->Actual * 1000) / 1000;
+	float ActualForMinMeasure = roundf(Measure->Min * 1000) / 1000;
 	if(Measure->Max < Measure->Actual)
 		Measure->Max = Measure->Actual;
-	if(Measure->Min > Measure->Actual || ActualForMinMeasure == 0.0)
+	if(Measure->Min > Measure->Actual && ActualForMinMeasure != 0.0f)
 	{
 		Measure->Min = Measure->Actual;
 	}
+	else
+		Measure->Min = Measure->Max;
 }
 static void CalcAvg()
 {
@@ -63,6 +67,11 @@ static void CalcTemperature()
 	}
 }
 
+void TempSensInit()
+{
+	SensorDht11.begin();
+}
+
 void CalcMeasures()
 {
 	int Sample = 0;
@@ -73,6 +82,7 @@ void CalcMeasures()
 	}
 	CurrentRead /= N_SAMPLE;
 	Measures.Current.Actual = (float)CurrentRead * ADC_TO_VOLT;
+	Measures.Current.Actual = roundf(Measures.Current.Actual * 10) / 10;
 	Measures.Power.Actual = Measures.Current.Actual * VOLTAGE;
 	CalcTemperature();
 	CalcMaxMin(&Measures.Current);
@@ -80,8 +90,5 @@ void CalcMeasures()
 	CalcAvg();
 }
 
-void TempSensInit()
-{
-	SensorDht11.begin();
-}
+
 
