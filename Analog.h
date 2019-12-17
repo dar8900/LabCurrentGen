@@ -33,6 +33,8 @@ extern const char *Udm[MAX_ANALOG_UDM];
 extern ANALOG_VALUES_S AnalogChannels[];
 
 void AnalogChannelsInit(void);
+bool IsOneAnalogEnabled(void);
+void SwitchOffAnalogCh(void);
 void ReadAnalogChannels(void);
 
 #endif

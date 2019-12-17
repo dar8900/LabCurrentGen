@@ -14,7 +14,7 @@
 
 #define TOP_POS				(1 + u8g2.getAscent())
 #define CENTER_POS			((DISPLAY_HIGH/2) + (u8g2.getAscent() / 2))
-#define BOTTOM_POS			(DISPLAY_HIGH )
+#define BOTTOM_POS			(DISPLAY_HIGH  - u8g2.getAscent())
 
 #define TITLE_Y_POS 		 7
 #define MENU_LIST_Y_POS 	18
@@ -91,7 +91,9 @@ typedef enum
 }RESET_ITEMS;
 
 void DisplayInit(void);
+void DrawPopUp(const String Str1 = "", const String Str2 = "", const String Str3 = "");
 void DrawMainMenu(void);
 void DrawCurrentCtrl(void);
+void DrawAnalogPages(void);
 
 #endif

@@ -5,6 +5,7 @@
 #include "CurrentControl.h"
 #include "Time.h"
 #include "Measure.h"
+#include "Analog.h"
 
 SYSTEM_FLAGS Flags;
 
@@ -17,6 +18,7 @@ void setup()
 	CurrentControlInit();
 	TimeInit();
 	TempSensInit();
+	AnalogChannelsInit();
 }
 
 
@@ -34,6 +36,7 @@ void loop()
 		case DIGITAL_IO:
 			break;
 		case ANALOG:
+			DrawAnalogPages();
 			break;
 		case MEASURES:
 			break;

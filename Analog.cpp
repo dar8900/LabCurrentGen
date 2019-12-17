@@ -20,8 +20,19 @@ const char *Udm[MAX_ANALOG_UDM] =
 ANALOG_VALUES_S AnalogChannels[ANALOG_CHANNELS];
 
 
+void AnalogChannelsInit()
+{
+	AnalogChannels[0].analogInput = ANALOG_1_PIN;
+	AnalogChannels[1].analogInput = ANALOG_2_PIN;
+	AnalogChannels[2].analogInput = ANALOG_3_PIN;
+	AnalogChannels[3].analogInput = ANALOG_4_PIN;
+	AnalogChannels[0].udm = RAW_VAL;
+	AnalogChannels[1].udm = VOLTAGE;
+	AnalogChannels[2].udm = RAW_VAL;
+	AnalogChannels[3].udm = RAW_VAL;	
+}
 
-static bool IsOneAnalogEnabled()
+bool IsOneAnalogEnabled()
 {
 	bool isEnabled = false;
 	for(int i = 0; i < ANALOG_CHANNELS; i++)
@@ -35,16 +46,10 @@ static bool IsOneAnalogEnabled()
 	return isEnabled;
 }
 
-void AnalogChannelsInit()
+void SwitchOffAnalogCh()
 {
-	AnalogChannels[0].analogInput = ANALOG_1_PIN;
-	AnalogChannels[1].analogInput = ANALOG_2_PIN;
-	AnalogChannels[2].analogInput = ANALOG_3_PIN;
-	AnalogChannels[3].analogInput = ANALOG_4_PIN;
-	AnalogChannels[0].udm = RAW_VAL;
-	AnalogChannels[1].udm = RAW_VAL;
-	AnalogChannels[2].udm = RAW_VAL;
-	AnalogChannels[3].udm = RAW_VAL;	
+	for(int i = 0; i < ANALOG_CHANNELS; i++)
+		Flags.enableAnalogChannel[i] = false;
 }
 
 void ReadAnalogChannels()
@@ -87,6 +92,8 @@ void ReadAnalogChannels()
 							break;
 					}
 				}
+				else
+					AnalogChannels[Channel].udmVal = (float)AnalogChannels[Channel].analogVal;
 			}
 			else
 				AnalogChannels[Channel].analogVal = 0;

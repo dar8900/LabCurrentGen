@@ -6,6 +6,7 @@
 #include "Time.h"
 #include "Measure.h"
 #include "CurrentControl.h"
+#include "Analog.h"
 
 #define SET_TOP_BAR_FONT (u8g2.setFont(u8g2_font_4x6_mf))
 #define SET_MENUS_FONT  (u8g2.setFont(u8g2_font_6x10_mf)) // alto 6 largo 10 monospace 
@@ -83,6 +84,36 @@ static void DoTasks()
 	CtrlCurrentExit();
 	GetTime();
 	CtrlTimeOn(false);
+}
+
+void DrawPopUp(const String Str1 = "", const String Str2 = "", const String Str3 = "")
+{
+	u8g2.clearBuffer();
+	u8g2.drawRFrame(0, 0, DISPLAY_WIDTH, DISPLAY_HIGH, 2);
+	u8g2.drawRFrame(1, 1, DISPLAY_WIDTH - 1, DISPLAY_HIGH - 1, 2);
+	u8g2.drawRFrame(2, 2, DISPLAY_WIDTH - 2, DISPLAY_HIGH - 2, 2);
+	u8g2.setFont(u8g2_font_8x13B_mf);
+	if(Str1 == "" && Str2 == "" && Str3 == "")
+	{
+		u8g2.drawStr(CENTER_ALIGN("VOID"), CENTER_POS, "VOID");
+	}
+	else if(Str2 == "" && Str3 == "" && Str1 != "")
+	{
+		u8g2.drawStr(CENTER_ALIGN(Str1.c_str()), CENTER_POS, Str1.c_str());
+	}
+	else if(Str2 != "" && Str3 == "" && Str1 != "")
+	{
+		u8g2.drawStr(CENTER_ALIGN(Str1.c_str()), TOP_POS, Str1.c_str());
+		u8g2.drawStr(CENTER_ALIGN(Str2.c_str()), CENTER_POS, Str2.c_str());
+	}
+	else
+	{
+		u8g2.drawStr(CENTER_ALIGN(Str1.c_str()), TOP_POS, Str1.c_str());
+		u8g2.drawStr(CENTER_ALIGN(Str2.c_str()), CENTER_POS, Str2.c_str());
+		u8g2.drawStr(CENTER_ALIGN(Str3.c_str()), BOTTOM_POS, Str3.c_str());
+	}
+	u8g2.sendBuffer();
+	delay(1500);
 }
 
 static void DrawTopInfo()
@@ -194,6 +225,7 @@ void DrawCurrentCtrl()
 		DrawTopInfo();
 		CurrentCtrlScreen(Current);
 		u8g2.sendBuffer();		
+		RotaryState = CheckRotary();
 		switch(RotaryState)
 		{
 			case DECREMENT:
@@ -219,5 +251,62 @@ void DrawCurrentCtrl()
 			default:
 				break;
 		}
+	}
+}
+
+static void ViewAnalogPage(uint8_t AnalogPage)
+{
+	String AnalogTitle = "Canale an. " + String(AnalogPage + 1);
+	String AnalogVal = String(AnalogChannels[AnalogPage].udmVal, 1);
+	SET_TITLE_FONT;
+	u8g2.drawStr(CENTER_ALIGN(AnalogTitle.c_str()), TITLE_Y_POS + STR_HIGH, AnalogTitle.c_str());
+	u8g2.setFont(u8g2_font_9x18_mf);
+	u8g2.drawStr(CENTER_ALIGN(AnalogVal.c_str()), MENU_LIST_Y_POS + STR_HIGH, AnalogVal.c_str());
+	SET_MENUS_FONT;
+	u8g2.drawStr(CENTER_ALIGN(Udm[AnalogChannels[AnalogPage].udm]), 34 + STR_HIGH, Udm[AnalogChannels[AnalogPage].udm]);
+}
+
+void DrawAnalogPages()
+{
+	bool ExitAnalogPages = false;
+	uint8_t RotaryState = NO_PRESS, AnalogPage = 0;
+	while(!ExitAnalogPages)
+	{
+		DoTasks();
+		ReadAnalogChannels();
+		u8g2.clearBuffer();
+		DrawTopInfo();
+		ViewAnalogPage(AnalogPage);
+		u8g2.sendBuffer();	
+		RotaryState = CheckRotary();
+		switch(RotaryState)
+		{
+			case DECREMENT:
+				if(AnalogPage > 0)
+					AnalogPage--;
+				else
+					AnalogPage = ANALOG_CHANNELS - 1;
+				break;
+			case INCREMENT:
+				if(AnalogPage < ANALOG_CHANNELS - 1)
+					AnalogPage++;
+				else
+					AnalogPage = 0;
+				break;
+			case OK:
+				Flags.enableAnalogChannel[AnalogPage] = !Flags.enableAnalogChannel[AnalogPage];
+				if(Flags.enableAnalogChannel[AnalogPage])
+					DrawPopUp("An.ch. " + String(AnalogPage + 1), "ON");
+				else
+					DrawPopUp("An.ch. " + String(AnalogPage + 1), "OFF");
+				break;
+			case BACK:
+				SwitchOffAnalogCh();
+				DisplayPage = MAIN_MENU;
+				ExitAnalogPages = true;
+				break;
+			default:
+				break;
+		}		
 	}
 }
