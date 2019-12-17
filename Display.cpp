@@ -2,8 +2,13 @@
 #include "Display.h"
 #include <U8g2lib.h>
 #include <SPI.h>
+#include "Keyboard.h"
 #include "Time.h"
 #include "Measure.h"
+
+#define SET_TOP_BAR_FONT (u8g2.setFont(u8g2_font_4x6_mf))
+#define SET_MENUS_FONT  (u8g2.setFont(u8g2_font_6x10_mf)) // alto 6 largo 10 monospace 
+#define SET_TITLE_FONT 	(u8g2.setFont(u8g2_font_8x13B_mf))
 
 U8G2_ST7920_128X64_F_HW_SPI u8g2(U8G2_R2, CS_DISPLAY_PIN, RESET_DISPLAY_PIN);
 
@@ -14,7 +19,7 @@ static const char *MainMenuTitles[MAX_MAIN_MENU_ITEMS] =
 	"Digital IN/OUT",
 	"Entrate analogiche",
 	"Misure",
-	"Menu dei log",
+	"Lista log",
 	"Statistiche",
 	"Setup",
 	"Menu dei reset"
@@ -34,12 +39,6 @@ static const char *AnalogTitles[MAX_ANALOG_ITEMS] =
 	"Entrata an. 4",
 };
 
-
-static const char *LogTitles[MAX_LOG_ITEMS] = 
-{
-	"Grafico log",
-	"Lista log",
-};
 
 static const char *StatisticsTitles[MAX_STATISTICS_ITEMS] = 
 {
@@ -76,5 +75,123 @@ void DisplayInit()
 	u8g2.begin();
 }
 
+static void DrawTopInfo()
+{
+	String TimeStr = GlobalTime.TimeStr + " " + GlobalTime.DateStr;
+	SET_TOP_BAR_FONT;
+	u8g2.drawStr(LEFT_ALIGN, TOP_POS + STR_HIGH, TimeStr.c_str());
+}
 
+static void DrawMenuList(uint8_t TopItem, uint8_t ItemSel, uint8_t MaxItems, const char **MenuVoices)
+{
+	int NewTopItem = 0, StrHigh = 0;
+	SET_TITLE_FONT;
+	u8g2.drawStr(CENTER_ALIGN("Menu"), TITLE_Y_POS + STR_HIGH, "Menu");
+	SET_MENUS_FONT;
+	StrHigh = STR_HIGH;
+	for(int i = 0; i < MAX_MENU_VIEW_ITEM; i++)
+	{
+		NewTopItem = TopItem + i;
+		if(NewTopItem >= MaxItems)
+			break;
+		u8g2.drawStr(LEFT_ALIGN, (MENU_LIST_Y_POS + StrHigh) + (i * (StrHigh + 2)), MenuVoices[NewTopItem]);
+		if(NewTopItem == ItemSel)
+		{
+			u8g2.setFontMode(0);
+			u8g2.setDrawColor(2);
+			u8g2.drawBox(LEFT_ALIGN, (MENU_LIST_Y_POS + StrHigh) + (i * 2)  - 1, 
+						 STR_WIDTH(MenuVoices[NewTopItem]) + 1, StrHigh + 2);	
+		}	
+	}
 
+}
+
+void DrawMainMenu()
+{
+	bool ExitMainMenu = false;
+	uint8_t TopItem = 0, ItemList = 0, ItemSel = 0, RotaryState = NO_PRESS;
+	
+	while(!ExitMainMenu)
+	{
+		u8g2.clearBuffer();
+		DrawTopInfo();
+		DrawMenuList(TopItem, ItemList, MAX_MAIN_MENU_ITEMS, MainMenuTitles);
+		u8g2.sendBuffer();
+		RotaryState = CheckRotary();
+		switch(RotaryState)
+		{
+			case DECREMENT:
+				if(ItemList > 0)
+					ItemList--;
+				else
+					ItemList = MAX_MAIN_MENU_ITEMS - 1;
+				break;
+			case INCREMENT:
+				if(ItemList < MAX_MAIN_MENU_ITEMS - 1)
+					ItemList++;
+				else
+					ItemList = 0;			
+				break;
+			case OK:
+				DisplayPage = ItemSel + 1;
+				ExitMainMenu = true;
+				break;
+			case BACK:
+			default:
+				break;
+		}
+		if(ItemList > MAX_MENU_VIEW_ITEM - 1)
+		{
+			TopItem = ItemList - MAX_MENU_VIEW_ITEM - 1;
+		}
+		else
+			TopItem = 0;
+		if(ItemList < MAX_MAIN_MENU_ITEMS - 3)
+		{
+			if(ItemList < MAX_MENU_VIEW_ITEM - 2)
+				ItemSel = ItemList;
+			else
+				ItemSel = TopItem  + 3;
+		}
+		else
+			ItemSel = MAX_MAIN_MENU_ITEMS - 1 - ItemList;		
+	}
+}
+
+static void CurrentCtrlScreen(uint8_t Current, bool CurrentEnable)
+{
+
+}
+
+void DrawCurrentCtrl()
+{
+	bool ExitCurrentCrtl = false, CurrenEnable = false;
+	uint8_t Current = 0, RotaryState = NO_PRESS;
+	while(!ExitCurrentCrtl)
+	{
+		u8g2.clearBuffer();
+		DrawTopInfo();
+
+		u8g2.sendBuffer();		
+		switch(RotaryState)
+		{
+			case DECREMENT:
+				if(Current > 0)
+					Current -= 5;
+				break;
+			case INCREMENT:
+				if(Current < 60)
+					Current += 5;			
+				break;
+			case OK:
+				CurrenEnable = !CurrenEnable;
+				break;
+			case BACK:
+				DisplayPage = MAIN_MENU;
+				ExitCurrentCrtl = true;
+				break;
+			default:
+				break;
+		}
+	}
+}

@@ -28,7 +28,7 @@ static void CalcMaxMin(SINGLE_MEASURE_S *Measure)
 }
 static void CalcAvg()
 {
-	if(CalcAvgTotTimer.hasPassed(300, true))
+	if(CalcAvgTotTimer.hasPassed(MIN_TO_SEC(5), true)) // Ogni 5 min
 	{
 		CalcAvgTimer.stop();
 		Measures.Current.Avg = (CurrentAvgAcc / AvgAcCnt);
@@ -42,7 +42,7 @@ static void CalcAvg()
 	}
 	else
 	{
-		if(CalcAvgTimer.hasPassed(500, true))
+		if(CalcAvgTimer.hasPassed(500, true)) // Ogni mezzo secondo
 		{
 			CurrentAvgAcc += Measures.Current.Actual;
 			PowerAvgAcc += Measures.Power.Actual;

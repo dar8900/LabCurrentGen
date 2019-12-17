@@ -16,6 +16,10 @@
 #define CENTER_POS			((DISPLAY_HIGH/2) + (u8g2.getAscent() / 2))
 #define BOTTOM_POS			(DISPLAY_HIGH )
 
+#define TITLE_Y_POS 		 7
+#define MENU_LIST_Y_POS 	18
+#define MAX_MENU_VIEW_ITEM	 5
+
 
 typedef enum 
 {
@@ -48,8 +52,7 @@ typedef enum
 
 typedef enum
 {
-	LOG_GRAPHIC_ITEM = 0,
-	LOG_LIST_ITEM,
+	LOG_LIST_ITEM = 0,
 	MAX_LOG_ITEMS
 }LOG_ITEMS;
 
@@ -85,5 +88,8 @@ typedef enum
 	RESET_TIME_ON_ITEM,
 	MAX_RESET_ITEMS
 }RESET_ITEMS;
+
+void DrawMainMenu(void);
+void DrawCurrentCtrl(void);
 
 #endif

@@ -26,7 +26,7 @@ extern const uint8_t DayInMonth[];
 extern TIME_DATE_S GlobalTime;
 extern uint32_t TimeOn;
 
-void TimeSetup(void);
+void TimeInit(void);
 void GetTime(void);
 void SetTime(uint8_t hour, uint8_t minute);
 void SetDate(uint8_t day, uint8_t month, uint8_t year);

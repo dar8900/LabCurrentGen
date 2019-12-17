@@ -18,8 +18,10 @@ void loop()
 	switch(DisplayPage)
 	{
 		case MAIN_MENU:
+			DrawMainMenu();
 			break;
 		case CURRENT_CTRL:
+			DrawCurrentCtrl();
 			break;
 		case DIGITAL_IO:
 			break;
@@ -29,13 +31,11 @@ void loop()
 			break;
 		case LOG:
 			break;
-		case LOG_GRAPHIC:
-			break;
-		case LOG_LIST:
-			break;
 		case STATISTICS:
 			break;
 		case SETUP:
+			break;
+		case SETUP_PARAM:
 			break;
 		case RESET:
 			break;

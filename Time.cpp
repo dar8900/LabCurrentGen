@@ -28,12 +28,10 @@ const uint8_t DayInMonth[12] =
 static DateTime now;
 
 
-void TimeSetup()
+void TimeInit()
 {
 	if (!rtc.begin())
 	{
-		GlobalTime.TimeStr = "--:--";
-		GlobalTime.DateStr = "--/--/--";
 		GlobalTime.TimeStr = "--:--";
 		GlobalTime.DateStr = "--/--/--";
 		GlobalTime.Hour = DFLT_HOUR;
@@ -55,6 +53,7 @@ void TimeSetup()
 		GlobalTime.Month = DFLT_MONTH;
 		GlobalTime.Year = DFLT_YEAR + 2000;		
 		SetTime(DFLT_HOUR, DFLT_MINUTE);
+		GlobalTime.IsRunning = true;
 		GetTime();
 	}
 	else
@@ -67,20 +66,23 @@ void TimeSetup()
 
 void GetTime()
 {
-	now = rtc.now();
-	GlobalTime.Hour = now.hour();
-	GlobalTime.Minute = now.month();
-	GlobalTime.Second = now.second();
-	GlobalTime.Day = now.day();
-	GlobalTime.Month = now.month();
-	GlobalTime.Year = now.year();
+	if(GlobalTime.IsRunning)
+	{
+		now = rtc.now();
+		GlobalTime.Hour = now.hour();
+		GlobalTime.Minute = now.month();
+		GlobalTime.Second = now.second();
+		GlobalTime.Day = now.day();
+		GlobalTime.Month = now.month();
+		GlobalTime.Year = now.year();
 
-	GlobalTime.TimeStr = (GlobalTime.Hour > 9 ? String(GlobalTime.Hour) : ("0" + String(GlobalTime.Hour)));
-	GlobalTime.TimeStr += ":" + (GlobalTime.Minute > 9 ? String(GlobalTime.Minute) : ("0" + String(GlobalTime.Minute)));
+		GlobalTime.TimeStr = (GlobalTime.Hour > 9 ? String(GlobalTime.Hour) : ("0" + String(GlobalTime.Hour)));
+		GlobalTime.TimeStr += ":" + (GlobalTime.Minute > 9 ? String(GlobalTime.Minute) : ("0" + String(GlobalTime.Minute)));
 
-	GlobalTime.DateStr = (GlobalTime.Day > 9 ? String(GlobalTime.Day) : ("0" + String(GlobalTime.Day)));
-	GlobalTime.DateStr += "/" + (GlobalTime.Month > 9 ? String(GlobalTime.Month) : ("0" + String(GlobalTime.Month)));
-	GlobalTime.DateStr += "/" + String(GlobalTime.Year % 100);
+		GlobalTime.DateStr = (GlobalTime.Day > 9 ? String(GlobalTime.Day) : ("0" + String(GlobalTime.Day)));
+		GlobalTime.DateStr += "/" + (GlobalTime.Month > 9 ? String(GlobalTime.Month) : ("0" + String(GlobalTime.Month)));
+		GlobalTime.DateStr += "/" + String(GlobalTime.Year % 100);
+	}
 }
 
 void SetTime(uint8_t hour, uint8_t minute)
