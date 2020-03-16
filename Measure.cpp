@@ -32,7 +32,7 @@ static void CalcMaxMin(SINGLE_MEASURE_S *Measure)
 }
 static void CalcAvg()
 {
-	if(CalcAvgTotTimer.hasPassed(MIN_TO_SEC(5), true)) // Ogni 5 min
+	if(CalcAvgTotTimer.hasPassed(MIN_TO_SEC(1), true)) // Ogni 5 min
 	{
 		CalcAvgTimer.stop();
 		Measures.Current.Avg = (CurrentAvgAcc / AvgAcCnt);
@@ -64,6 +64,7 @@ static void CalcTemperature()
 		if(isnan(Measures.Temperature.Actual))
 			Measures.Temperature.Actual = 0.0;
 		CalcMaxMin(&Measures.Temperature);
+		// DBG("Measure temp -> " + String(Measures.Temperature.Actual));
 	}
 }
 

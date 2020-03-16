@@ -66,6 +66,10 @@ void TimeInit()
 
 void GetTime()
 {
+	if(!rtc.isrunning())
+		GlobalTime.IsRunning = false;
+	else
+		GlobalTime.IsRunning = true;
 	if(GlobalTime.IsRunning)
 	{
 		now = rtc.now();
@@ -82,6 +86,11 @@ void GetTime()
 		GlobalTime.DateStr = (GlobalTime.Day > 9 ? String(GlobalTime.Day) : ("0" + String(GlobalTime.Day)));
 		GlobalTime.DateStr += "/" + (GlobalTime.Month > 9 ? String(GlobalTime.Month) : ("0" + String(GlobalTime.Month)));
 		GlobalTime.DateStr += "/" + String(GlobalTime.Year % 100);
+	}
+	else
+	{
+		GlobalTime.TimeStr = "--:--";
+		GlobalTime.DateStr = "--/--/--";
 	}
 }
 

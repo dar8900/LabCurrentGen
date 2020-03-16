@@ -13,6 +13,7 @@ uint8_t DisplayPage = MAIN_MENU;
 
 void setup()
 {
+	Serial.begin(9600);
 	DisplayInit();
 	KeyboardInit();
 	CurrentControlInit();

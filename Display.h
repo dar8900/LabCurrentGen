@@ -17,8 +17,8 @@
 #define BOTTOM_POS			(DISPLAY_HIGH  - u8g2.getAscent())
 
 #define TITLE_Y_POS 		 7
-#define MENU_LIST_Y_POS 	18
-#define MAX_MENU_VIEW_ITEM	 5
+#define MENU_LIST_Y_POS 	20
+#define MAX_MENU_VIEW_ITEM	 4
 
 
 typedef enum 
@@ -31,7 +31,7 @@ typedef enum
 	STATISTICS_ITEM,
 	SETUP_ITEM,
 	RESET_ITEM,
-	MAX_MAIN_MENU_ITEMS
+	MAX_MAIN_MENU_ITEMS 		// 8
 }MAIN_MENU_ITEMS;
 
 typedef enum

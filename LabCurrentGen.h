@@ -9,12 +9,19 @@
 #include <Chrono.h>
 #include <DHT.h>
 
+#define DEBUG	
+
+#ifdef DEBUG
+	#define DBG(msg) 	Serial.println(msg)
+#else
+	#define DBG(msg) 	
+#endif
+
 // Comunication
 #define SCL_PIN				 0
 #define SDA_PIN				 1 
 
 // Display e digital pin
-#define BACK_BUTT_PIN		 6
 #define ROTARY_A_PIN		 7
 #define ROTARY_B_PIN         8
 #define ROTARY_BUTT_PIN      9
@@ -41,8 +48,11 @@
 #define MIN_TO_SEC(min)		 (min * 60)
 
 #define ANALOG_CHANNELS			  4
-#define ADC_TO_VOLT 			 0.0049 
-#define ACS20_VOLT_TO_AMPS	 0.1
+#define ADC_TO_VOLT 			  0.0049 
+#define ACS20_VOLT_TO_AMPS	      0.1
+
+
+
 
 typedef struct 
 {

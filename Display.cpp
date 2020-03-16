@@ -9,6 +9,7 @@
 #include "Analog.h"
 
 #define SET_TOP_BAR_FONT (u8g2.setFont(u8g2_font_4x6_mf))
+#define SET_INFO_SMALL_FONT	(u8g2.setFont(u8g2_font_4x6_mf))
 #define SET_MENUS_FONT  (u8g2.setFont(u8g2_font_6x10_mf)) // alto 6 largo 10 monospace 
 #define SET_TITLE_FONT 	(u8g2.setFont(u8g2_font_8x13B_mf))
 
@@ -118,9 +119,11 @@ void DrawPopUp(const String Str1 = "", const String Str2 = "", const String Str3
 
 static void DrawTopInfo()
 {
-	String TimeStr = GlobalTime.TimeStr + " " + GlobalTime.DateStr;
+	String TimeStr = GlobalTime.TimeStr;
+	String DateStr = GlobalTime.DateStr;
 	SET_TOP_BAR_FONT;
-	u8g2.drawStr(LEFT_ALIGN, TOP_POS + STR_HIGH, TimeStr.c_str());
+	u8g2.drawStr(LEFT_ALIGN, TOP_POS, TimeStr.c_str());
+	u8g2.drawStr(RIGHT_ALIGN(DateStr.c_str()), TOP_POS, DateStr.c_str());
 }
 
 static void DrawMenuList(uint8_t TopItem, uint8_t ItemSel, uint8_t MaxItems, const char **MenuVoices)
@@ -135,13 +138,13 @@ static void DrawMenuList(uint8_t TopItem, uint8_t ItemSel, uint8_t MaxItems, con
 		NewTopItem = TopItem + i;
 		if(NewTopItem >= MaxItems)
 			break;
-		u8g2.drawStr(LEFT_ALIGN, (MENU_LIST_Y_POS + StrHigh) + (i * (StrHigh + 2)), MenuVoices[NewTopItem]);
+		String MenuVoice = String(NewTopItem + 1) + "." + String(MenuVoices[NewTopItem]);
+		u8g2.drawStr(LEFT_ALIGN, (MENU_LIST_Y_POS + StrHigh) + (i * (StrHigh + 5)), MenuVoice.c_str());
 		if(NewTopItem == ItemSel)
 		{
-			u8g2.setFontMode(0);
 			u8g2.setDrawColor(2);
-			u8g2.drawBox(LEFT_ALIGN, (MENU_LIST_Y_POS + StrHigh) + (i * 2)  - 1, 
-						 STR_WIDTH(MenuVoices[NewTopItem]) + 1, StrHigh + 2);	
+			u8g2.drawBox(LEFT_ALIGN, (MENU_LIST_Y_POS - 1) + (i * (StrHigh + 5)) , 
+						 STR_WIDTH(MenuVoices[NewTopItem]) + 12, StrHigh + 3);	
 		}	
 	}
 
@@ -178,25 +181,22 @@ void DrawMainMenu()
 				DisplayPage = ItemSel + 1;
 				ExitMainMenu = true;
 				break;
+			// case OK:
+				// if(ItemList < MAX_MAIN_MENU_ITEMS - 1)
+					// ItemList++;
+				// else
+					// ItemList = 0;				
+				// break;
 			case BACK:
 			default:
 				break;
 		}
 		if(ItemList > MAX_MENU_VIEW_ITEM - 1)
 		{
-			TopItem = ItemList - MAX_MENU_VIEW_ITEM - 1;
+			TopItem = ItemList - (MAX_MENU_VIEW_ITEM - 1);
 		}
 		else
-			TopItem = 0;
-		if(ItemList < MAX_MAIN_MENU_ITEMS - 3)
-		{
-			if(ItemList < MAX_MENU_VIEW_ITEM - 2)
-				ItemSel = ItemList;
-			else
-				ItemSel = TopItem  + 3;
-		}
-		else
-			ItemSel = MAX_MAIN_MENU_ITEMS - 1 - ItemList;		
+			TopItem = 0;		
 	}
 }
 
