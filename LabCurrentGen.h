@@ -48,7 +48,7 @@
 #define MIN_TO_SEC(min)		 (min * 60)
 
 #define ANALOG_CHANNELS			  4
-#define ADC_TO_VOLT 			  0.0049 
+#define ADC_TO_VOLT 			  0.0048
 #define ACS20_VOLT_TO_AMPS	      0.1
 
 
@@ -73,7 +73,7 @@ typedef enum
 	STATISTICS,
 	SETUP,
 	RESET,
-	SETUP_PARAM,
+	// SETUP_PARAM,
 	MAX_DISPLAY_PAGES
 }DISPLAY_PAGES;
 

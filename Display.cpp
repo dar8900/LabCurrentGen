@@ -104,13 +104,13 @@ void DrawPopUp(const String Str1 = "", const String Str2 = "", const String Str3
 	}
 	else if(Str2 != "" && Str3 == "" && Str1 != "")
 	{
-		u8g2.drawStr(CENTER_ALIGN(Str1.c_str()), TOP_POS, Str1.c_str());
-		u8g2.drawStr(CENTER_ALIGN(Str2.c_str()), CENTER_POS, Str2.c_str());
+		u8g2.drawStr(CENTER_ALIGN(Str1.c_str()), TOP_POS + 3, Str1.c_str());
+		u8g2.drawStr(CENTER_ALIGN(Str2.c_str()), CENTER_POS - 5, Str2.c_str());
 	}
 	else
 	{
-		u8g2.drawStr(CENTER_ALIGN(Str1.c_str()), TOP_POS, Str1.c_str());
-		u8g2.drawStr(CENTER_ALIGN(Str2.c_str()), CENTER_POS, Str2.c_str());
+		u8g2.drawStr(CENTER_ALIGN(Str1.c_str()), TOP_POS + 3, Str1.c_str());
+		u8g2.drawStr(CENTER_ALIGN(Str2.c_str()), CENTER_POS - 5, Str2.c_str());
 		u8g2.drawStr(CENTER_ALIGN(Str3.c_str()), BOTTOM_POS, Str3.c_str());
 	}
 	u8g2.sendBuffer();
@@ -153,7 +153,7 @@ static void DrawMenuList(uint8_t TopItem, uint8_t ItemSel, uint8_t MaxItems, con
 void DrawMainMenu()
 {
 	bool ExitMainMenu = false;
-	uint8_t TopItem = 0, ItemList = 0, ItemSel = 0, RotaryState = NO_PRESS;
+	uint8_t TopItem = 0, ItemList = 0, RotaryState = NO_PRESS;
 	
 	while(!ExitMainMenu)
 	{
@@ -165,27 +165,21 @@ void DrawMainMenu()
 		RotaryState = CheckRotary();
 		switch(RotaryState)
 		{
-			case DECREMENT:
-				if(ItemList > 0)
-					ItemList--;
-				else
-					ItemList = MAX_MAIN_MENU_ITEMS - 1;
-				break;
-			case INCREMENT:
-				if(ItemList < MAX_MAIN_MENU_ITEMS - 1)
-					ItemList++;
-				else
-					ItemList = 0;			
-				break;
-			case OK:
-				DisplayPage = ItemSel + 1;
-				ExitMainMenu = true;
-				break;
-			// case OK:
+			// case DECREMENT:
+				// if(ItemList > 0)
+					// ItemList--;
+				// else
+					// ItemList = MAX_MAIN_MENU_ITEMS - 1;
+				// break;
+			// case INCREMENT:
 				// if(ItemList < MAX_MAIN_MENU_ITEMS - 1)
 					// ItemList++;
 				// else
-					// ItemList = 0;				
+					// ItemList = 0;			
+				// break;
+			// case OK:
+				// DisplayPage = ItemList + 1;
+				// ExitMainMenu = true;
 				// break;
 			case BACK:
 			default:
@@ -209,9 +203,9 @@ static void CurrentCtrlScreen(uint8_t Current)
 	SET_TITLE_FONT;
 	u8g2.drawStr(CENTER_ALIGN("Reg. I"), TITLE_Y_POS + STR_HIGH, "Reg. I");
 	u8g2.setFont(u8g2_font_9x15B_mf);
-	u8g2.drawStr(LEFT_ALIGN, MENU_LIST_Y_POS + STR_HIGH, CurrValueSet.c_str());
-	u8g2.drawStr(RIGHT_ALIGN(CurrValueMis.c_str()), MENU_LIST_Y_POS + STR_HIGH, CurrValueMis.c_str());
-	u8g2.drawStr(CENTER_ALIGN("-->"), MENU_LIST_Y_POS + STR_HIGH, "-->");
+	u8g2.drawStr(LEFT_ALIGN, MENU_LIST_Y_POS + STR_HIGH + 2, CurrValueSet.c_str());
+	u8g2.drawStr(RIGHT_ALIGN(CurrValueMis.c_str()), MENU_LIST_Y_POS + STR_HIGH + 2, CurrValueMis.c_str());
+	u8g2.drawStr(CENTER_ALIGN("-->"), MENU_LIST_Y_POS + STR_HIGH + 2, "-->");
 }
 
 void DrawCurrentCtrl()
@@ -245,6 +239,7 @@ void DrawCurrentCtrl()
 					CurrentSet = 0.0;
 				break;
 			case BACK:
+				Flags.enableCurrent = false;
 				DisplayPage = MAIN_MENU;
 				ExitCurrentCrtl = true;
 				break;
@@ -259,11 +254,11 @@ static void ViewAnalogPage(uint8_t AnalogPage)
 	String AnalogTitle = "Canale an. " + String(AnalogPage + 1);
 	String AnalogVal = String(AnalogChannels[AnalogPage].udmVal, 1);
 	SET_TITLE_FONT;
-	u8g2.drawStr(CENTER_ALIGN(AnalogTitle.c_str()), TITLE_Y_POS + STR_HIGH, AnalogTitle.c_str());
+	u8g2.drawStr(CENTER_ALIGN(AnalogTitle.c_str()), TITLE_Y_POS + STR_HIGH + 3, AnalogTitle.c_str());
 	u8g2.setFont(u8g2_font_9x18_mf);
-	u8g2.drawStr(CENTER_ALIGN(AnalogVal.c_str()), MENU_LIST_Y_POS + STR_HIGH, AnalogVal.c_str());
+	u8g2.drawStr(CENTER_ALIGN(AnalogVal.c_str()), MENU_LIST_Y_POS + STR_HIGH + 3, AnalogVal.c_str());
 	SET_MENUS_FONT;
-	u8g2.drawStr(CENTER_ALIGN(Udm[AnalogChannels[AnalogPage].udm]), 34 + STR_HIGH, Udm[AnalogChannels[AnalogPage].udm]);
+	u8g2.drawStr(CENTER_ALIGN(Udm[AnalogChannels[AnalogPage].udm]), 37 + STR_HIGH, Udm[AnalogChannels[AnalogPage].udm]);
 }
 
 void DrawAnalogPages()

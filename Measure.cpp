@@ -86,9 +86,10 @@ void CalcMeasures()
 		}
 		CurrentRead /= N_SAMPLE;
 		CurrentRead -= AdcCurrentOffSet;
-		Measures.Current.Actual = (float)CurrentRead * ADC_TO_VOLT / ACS20_VOLT_TO_AMPS;
+		Measures.Current.Actual = (((float)CurrentRead) * ADC_TO_VOLT / 2) / ACS20_VOLT_TO_AMPS;
 		Measures.Current.Actual = roundf(Measures.Current.Actual * 10) / 10;
 		Measures.Power.Actual = Measures.Current.Actual * VOLTAGE;
+		DBG("Measure current -> " + String(Measures.Current.Actual));
 	}
 	else
 	{
@@ -98,7 +99,7 @@ void CalcMeasures()
 		}		
 		AdcCurrentOffSet = CurrentRead / 10;
 		Measures.Current.Actual = 0.0;
-		Measures.Power.Actual = 0.0;		
+		Measures.Power.Actual = 0.0;			
 	}
 
 	CalcMaxMin(&Measures.Current);

@@ -20,6 +20,7 @@ void setup()
 	TimeInit();
 	TempSensInit();
 	AnalogChannelsInit();
+	DrawPopUp("Home", "Microtech", "Welcome!");
 }
 
 
@@ -47,8 +48,8 @@ void loop()
 			break;
 		case SETUP:
 			break;
-		case SETUP_PARAM:
-			break;
+		// case SETUP_PARAM:
+			// break;
 		case RESET:
 			break;
 		default:
